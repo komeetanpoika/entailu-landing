@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { translations, Lang } from './translations';
 
 // ── Counter hook ──────────────────────────────────────────────────────────────
 function useCounter(target: number, duration = 1800) {
@@ -45,48 +46,32 @@ const TICKER = [
   { name: 'Seiti',      kg: '7.2',  expiry: '1d', warn: true  },
 ];
 
-const FEATURES = [
-  { n: '01', title: 'Ledger-true stock',        body: 'Every lot lives in an append-only movement ledger — received, sold, discarded, processed. The numbers always reconcile, and nothing is ever silently deleted.' },
-  { n: '02', title: 'Automatic FIFO',           body: 'Sales deduct from the earliest-expiring stock first. Opened lots cap at the 2-day shelf life, and near-expiry pieces surface for a decision before they become waste.' },
-  { n: '03', title: 'AI delivery parsing',      body: 'Photograph a delivery note. Claude vision reads every line item and matches it to your product catalogue — you just review and confirm.' },
-  { n: '04', title: 'POS import',               body: 'Upload the daily sales export. Products match automatically, euros stay exact, and duplicate files are caught before they double-count.' },
-  { n: '05', title: 'Per-fish ordering',        body: 'Four ordering strategies, from Lean to Safety+. Each product is auto-assigned one from its sales velocity and margin — or pin your own choice per fish.' },
-  { n: '06', title: 'Analytics dashboard',      body: 'Sales, stock value, waste, margin and sell-through, charted per product — with waste risk and low stock flagged the moment you open it.' },
-];
-
-const ALGOS = [
-  { name: 'Lean',     buffer: 'No buffer',   body: 'Cover forecast demand exactly. For slow, low-margin products where waste costs more than a missed sale.' },
-  { name: 'Cautious', buffer: '+10% buffer', body: 'A light safety margin for slower products that still earn their place in the counter.' },
-  { name: 'Balanced', buffer: '+20% buffer', body: 'The workhorse. Enough buffer to absorb a busy weekend without filling the case with risk.' },
-  { name: 'Safety+',  buffer: '+3 days cover', body: 'Never miss a sale on your fast, high-margin heroes. Extra days of cover where stockouts hurt most.' },
-];
-
-const STEPS = [
-  { n: '1', title: 'Receive',  body: 'Photograph the delivery note. AI reads every item and fuzzy-matches to your catalogue.' },
-  { n: '2', title: 'Open',     body: 'Mark pieces opened. Expiry caps automatically at the 2-day fish shelf life.' },
-  { n: '3', title: 'Sell',     body: 'Record manually or import the POS file. FIFO enforced without you thinking about it.' },
-  { n: '4', title: 'Comply',   body: 'Morning and evening records — near-expiry decisions, deliveries, sales, waste. Timestamped and attested.' },
-];
-
-const COMPLIANCE = [
-  'Morning & end-of-day records',
-  'Near-expiry action audit trail',
-  'FIFO stock rotation',
-  'Append-only movement ledger',
-  'Discard documentation',
-  'Delivery verification',
-  'Scientific names per product',
-  'Automatic expiry sweep',
-];
-
 const WEB3FORMS_ACCESS_KEY = '17ae9229-1b47-4ace-b060-852f261496a6';
+
+function initialLang(): Lang {
+  const stored = localStorage.getItem('entailu-lang');
+  return stored === 'en' ? 'en' : 'fi';
+}
 
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const s1 = useCounter(12400);
   const s2 = useCounter(847);
   const s3 = useCounter(98);
+  const [lang, setLang] = useState<Lang>(initialLang);
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const t = translations[lang];
+  const stats = [
+    { stat: s1, suffix: '+', ...t.stats[0] },
+    { stat: s2, suffix: '',  ...t.stats[1] },
+    { stat: s3, suffix: '%', ...t.stats[2] },
+  ];
+
+  useEffect(() => {
+    localStorage.setItem('entailu-lang', lang);
+    document.title = t.pageTitle;
+    document.documentElement.lang = lang;
+  }, [lang, t.pageTitle]);
 
   async function handleDemoSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -128,11 +113,24 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 sm:px-10 h-14 flex items-center justify-between">
           <span className="font-display text-xl tracking-[0.15em] font-medium select-none">ENTAILU</span>
           <div className="flex items-center gap-8">
-            <a href="#features"    className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink transition-colors hidden sm:block">Features</a>
-            <a href="#ordering"    className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink transition-colors hidden sm:block">Ordering</a>
-            <a href="#compliance"  className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink transition-colors hidden sm:block">Compliance</a>
+            <a href="#features"    className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink transition-colors hidden sm:block">{t.nav.features}</a>
+            <a href="#ordering"    className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink transition-colors hidden sm:block">{t.nav.ordering}</a>
+            <a href="#compliance"  className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink transition-colors hidden sm:block">{t.nav.compliance}</a>
+            <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em]">
+              {(['fi', 'en'] as Lang[]).map((l, i) => (
+                <span key={l} className="flex items-center gap-1.5">
+                  {i > 0 && <span className="text-ink/20">/</span>}
+                  <button
+                    onClick={() => setLang(l)}
+                    className={l === lang ? 'text-ink' : 'text-ink/35 hover:text-ink transition-colors'}
+                  >
+                    {l.toUpperCase()}
+                  </button>
+                </span>
+              ))}
+            </div>
             <a href="#contact"     className="font-mono text-[10px] uppercase tracking-[0.2em] bg-ink text-cream px-5 py-2.5 hover:bg-forest transition-colors">
-              Get a demo
+              {t.nav.cta}
             </a>
           </div>
         </div>
@@ -145,22 +143,22 @@ export default function App() {
           {/* Headline */}
           <div className="animate-fadeUp">
             <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-ochre mb-10">
-              Fish inventory management
+              {t.hero.kicker}
             </p>
             <h1 className="font-display text-[clamp(3.5rem,8vw,6rem)] font-light leading-[1.02] mb-10 text-cream">
-              Every gram,<br />
-              <em className="italic text-forest-300">accounted</em><br />
-              for.
+              {t.hero.headline.pre}<br />
+              <em className="italic text-forest-300">{t.hero.headline.em}</em>
+              {t.hero.headline.post && <><br />{t.hero.headline.post}</>}
             </h1>
             <p className="font-body text-cream/50 text-lg leading-relaxed max-w-md mb-12">
-              Entailu tracks fish stock by weight through an append-only ledger, enforces FIFO automatically, and knows what each fish needs ordered — with a full compliance record, every single day.
+              {t.hero.sub}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a href="#contact"  className="font-mono text-[10px] uppercase tracking-[0.2em] bg-ochre text-ink px-8 py-4 hover:bg-ochre-400 transition-colors text-center">
-                Book a demo
+                {t.hero.ctaPrimary}
               </a>
               <a href="#features" className="font-mono text-[10px] uppercase tracking-[0.2em] border border-cream/15 text-cream/50 px-8 py-4 hover:border-cream/40 hover:text-cream/80 transition-colors text-center">
-                See features →
+                {t.hero.ctaSecondary}
               </a>
             </div>
           </div>
@@ -173,15 +171,15 @@ export default function App() {
                 <div className="flex items-center gap-3">
                   <span className="w-2 h-2 rounded-full bg-ochre/60 animate-pulse" />
                   <span className="font-mono text-[10px] text-cream/30 uppercase tracking-widest">
-                    Live stock — {new Date().toLocaleDateString('fi-FI')}
+                    {t.ticker.live} — {new Date().toLocaleDateString('fi-FI')}
                   </span>
                 </div>
-                <span className="font-mono text-[10px] text-forest-400">FIFO active</span>
+                <span className="font-mono text-[10px] text-forest-400">{t.ticker.fifoActive}</span>
               </div>
 
               {/* Column headers */}
               <div className="grid grid-cols-[1fr_80px_70px] px-5 py-2.5 border-b border-cream/5">
-                {['Product', 'In stock', 'Expiry'].map(h => (
+                {t.ticker.columns.map(h => (
                   <span key={h} className="font-mono text-[9px] uppercase tracking-widest text-cream/20">{h}</span>
                 ))}
               </div>
@@ -212,8 +210,8 @@ export default function App() {
 
               {/* Footer */}
               <div className="px-5 py-3 border-t border-cream/[0.06] flex items-center justify-between bg-cream/[0.02]">
-                <span className="font-mono text-[9px] text-cream/20 uppercase tracking-widest">Auto-discard · Pending deliveries</span>
-                <span className="font-mono text-[9px] text-forest-300">8 items in stock</span>
+                <span className="font-mono text-[9px] text-cream/20 uppercase tracking-widest">{t.ticker.footerLeft}</span>
+                <span className="font-mono text-[9px] text-forest-300">{t.ticker.footerRight}</span>
               </div>
             </div>
           </div>
@@ -224,11 +222,7 @@ export default function App() {
       <section className="border-b border-ink/10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-ink/10">
-            {[
-              { stat: s1, suffix: '+', label: 'Grams tracked per counter per day',    note: 'avg across customers' },
-              { stat: s2, suffix: '',  label: 'Compliance checklists stored to date', note: 'timestamped & audit-ready' },
-              { stat: s3, suffix: '%', label: 'Reduction in manual data entry',       note: 'vs. spreadsheet workflows' },
-            ].map(({ stat, suffix, label, note }) => (
+            {stats.map(({ stat, suffix, label, note }) => (
               <div key={label} ref={stat.ref} className="px-10 py-14">
                 <div className="font-display text-[4.5rem] font-light leading-none text-forest mb-3">
                   {stat.count.toLocaleString('fi-FI')}{suffix}
@@ -246,22 +240,22 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-16 mb-20 items-end">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/30 mb-5">Capabilities</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/30 mb-5">{t.features.kicker}</p>
               <h2 className="font-display text-[clamp(2.5rem,5vw,4rem)] font-light leading-tight">
-                Built for fish retail,<br />not generic stock.
+                {t.features.heading[0]}<br />{t.features.heading[1]}
               </h2>
             </div>
             <div className="lg:pb-2">
               <p className="text-ink/45 leading-relaxed max-w-lg text-lg">
-                Every feature is designed around how fish counter teams actually work — perishable goods, weight-based selling, daily compliance, and AI-assisted receiving.
+                {t.features.intro}
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-ink/10">
-            {FEATURES.map((f) => (
-              <div key={f.n} className="border-b border-r border-ink/10 p-9 group hover:bg-forest/[0.03] transition-colors cursor-default">
-                <div className="font-mono text-xs text-ochre mb-7 tracking-widest">{f.n}</div>
+            {t.features.cards.map((f, i) => (
+              <div key={f.title} className="border-b border-r border-ink/10 p-9 group hover:bg-forest/[0.03] transition-colors cursor-default">
+                <div className="font-mono text-xs text-ochre mb-7 tracking-widest">{String(i + 1).padStart(2, '0')}</div>
                 <h3 className="font-display text-2xl font-light mb-4 group-hover:text-forest transition-colors duration-300">
                   {f.title}
                 </h3>
@@ -277,19 +271,19 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-20">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/30 mb-5">Workflow</p>
-              <h2 className="font-display text-[clamp(2.5rem,5vw,4rem)] font-light">Four steps.<br />Every day.</h2>
+              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/30 mb-5">{t.workflow.kicker}</p>
+              <h2 className="font-display text-[clamp(2.5rem,5vw,4rem)] font-light">{t.workflow.heading[0]}<br />{t.workflow.heading[1]}</h2>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-ink/10">
-            {STEPS.map((s) => (
-              <div key={s.n} className="relative border-b border-r border-ink/10 p-9 overflow-hidden">
+            {t.workflow.steps.map((s, i) => (
+              <div key={s.title} className="relative border-b border-r border-ink/10 p-9 overflow-hidden">
                 <div className="font-display text-[8rem] font-light text-ink/[0.04] absolute -top-4 -right-2 leading-none select-none pointer-events-none">
-                  {s.n}
+                  {i + 1}
                 </div>
                 <div className="w-8 h-8 border border-forest text-forest font-mono text-xs flex items-center justify-center mb-8">
-                  {s.n}
+                  {i + 1}
                 </div>
                 <h3 className="font-display text-2xl font-light mb-3">{s.title}</h3>
                 <p className="text-ink/45 text-sm leading-relaxed">{s.body}</p>
@@ -304,20 +298,20 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-16 mb-20 items-end">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/30 mb-5">Ordering intelligence</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/30 mb-5">{t.ordering.kicker}</p>
               <h2 className="font-display text-[clamp(2.5rem,5vw,4rem)] font-light leading-tight">
-                One strategy<br />per fish.
+                {t.ordering.heading[0]}<br />{t.ordering.heading[1]}
               </h2>
             </div>
             <div className="lg:pb-2">
               <p className="text-ink/45 leading-relaxed max-w-lg text-lg">
-                Entailu measures 28-day sales velocity and margin for every product and places it on the service-versus-waste curve. Each fish is assigned the ordering strategy that fits it — automatically, or pinned by you.
+                {t.ordering.intro}
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-ink/10">
-            {ALGOS.map((a) => (
+            {t.ordering.cards.map((a) => (
               <div key={a.name} className="border-b border-r border-ink/10 p-9 group hover:bg-forest/[0.03] transition-colors cursor-default">
                 <div className="font-mono text-[10px] uppercase tracking-widest text-ochre mb-7">{a.buffer}</div>
                 <h3 className="font-display text-2xl font-light mb-4 group-hover:text-forest transition-colors duration-300">
@@ -334,16 +328,16 @@ export default function App() {
       <section id="compliance" className="py-32 px-6 sm:px-10 bg-forest text-cream">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-cream/30 mb-5">EU Compliance</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-cream/30 mb-5">{t.compliance.kicker}</p>
             <h2 className="font-display text-[clamp(2.5rem,5vw,4rem)] font-light leading-tight mb-8 text-cream">
-              Built for 852/2004,<br />853/2004<br />and HACCP.
+              {t.compliance.heading[0]}<br />{t.compliance.heading[1]}<br />{t.compliance.heading[2]}
             </h2>
             <p className="text-cream/50 leading-relaxed max-w-md text-lg">
-              Morning and end-of-day checklists generate a timestamped, attested compliance record for every day of trading — and every product carries its scientific name, as EU labelling rules require. No paper. No gaps. Ready for inspection at any time.
+              {t.compliance.paragraph}
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            {COMPLIANCE.map((item) => (
+            {t.compliance.items.map((item) => (
               <div key={item} className="flex items-center gap-3 border border-cream/10 px-4 py-3.5 hover:border-cream/20 transition-colors">
                 <span className="text-ochre font-mono text-sm flex-shrink-0">✓</span>
                 <span className="font-mono text-[10px] text-cream/60 uppercase tracking-wider leading-relaxed">{item}</span>
@@ -357,15 +351,15 @@ export default function App() {
       <section id="contact" className="py-32 px-6 sm:px-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/30 mb-5">Get started</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/30 mb-5">{t.contact.kicker}</p>
             <h2 className="font-display text-[clamp(2.5rem,5vw,4rem)] font-light leading-tight mb-8">
-              See it with<br />your own data.
+              {t.contact.heading[0]}<br />{t.contact.heading[1]}
             </h2>
             <p className="text-ink/45 leading-relaxed max-w-sm text-lg mb-10">
-              We'll walk you through Entailu using your product catalogue and delivery notes. No slides — just the actual system.
+              {t.contact.paragraph}
             </p>
             <div className="space-y-3">
-              {['Setup in under one day', 'Training included', 'Multi-shop support', 'Finnish support'].map(b => (
+              {t.contact.bullets.map(b => (
                 <div key={b} className="flex items-center gap-3">
                   <span className="text-forest font-mono text-sm">—</span>
                   <span className="font-mono text-xs text-ink/50 uppercase tracking-wider">{b}</span>
@@ -376,20 +370,16 @@ export default function App() {
 
           {formStatus === 'sent' ? (
             <div className="border border-forest/30 bg-forest/[0.04] px-8 py-12 text-center">
-              <p className="font-display text-3xl font-light text-forest mb-4">Kiitos!</p>
+              <p className="font-display text-3xl font-light text-forest mb-4">{t.contact.form.successTitle}</p>
               <p className="text-ink/50 leading-relaxed">
-                Your demo request is on its way. We'll be in touch shortly.
+                {t.contact.form.successBody}
               </p>
             </div>
           ) : (
             <form className="flex flex-col gap-6" onSubmit={handleDemoSubmit}>
               <input type="checkbox" name="botcheck" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
-              {[
-                { label: 'Name',    name: 'name',    type: 'text',  placeholder: 'Your name',       required: true  },
-                { label: 'Email',   name: 'email',   type: 'email', placeholder: 'you@company.com', required: true  },
-                { label: 'Company', name: 'company', type: 'text',  placeholder: 'Optional',        required: false },
-              ].map(f => (
-                <div key={f.label}>
+              {t.contact.form.fields.map(f => (
+                <div key={f.name}>
                   <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-ink/35 mb-2.5">
                     {f.label}
                   </label>
@@ -407,11 +397,11 @@ export default function App() {
                 disabled={formStatus === 'sending'}
                 className="font-mono text-[10px] uppercase tracking-[0.2em] bg-ink text-cream px-8 py-4 hover:bg-forest transition-colors mt-2 disabled:opacity-50 disabled:cursor-wait"
               >
-                {formStatus === 'sending' ? 'Sending…' : 'Book a demo →'}
+                {formStatus === 'sending' ? t.contact.form.sending : t.contact.form.submit}
               </button>
               {formStatus === 'error' && (
                 <p className="font-mono text-xs text-ochre-400">
-                  Something went wrong — please try again, or email us directly.
+                  {t.contact.form.error}
                 </p>
               )}
             </form>
@@ -424,7 +414,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <span className="font-display text-lg tracking-[0.15em]">ENTAILU</span>
           <span className="font-mono text-[10px] text-ink/25 uppercase tracking-widest">
-            © {new Date().getFullYear()} Entailu Oy · All rights reserved
+            © {new Date().getFullYear()} Entailu Oy · {t.footer.rights}
           </span>
         </div>
       </footer>
