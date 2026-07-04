@@ -49,8 +49,11 @@ const TICKER = [
 const WEB3FORMS_ACCESS_KEY = '17ae9229-1b47-4ace-b060-852f261496a6';
 
 function initialLang(): Lang {
-  const stored = localStorage.getItem('entailu-lang');
-  return stored === 'en' ? 'en' : 'fi';
+  try {
+    return localStorage.getItem('entailu-lang') === 'en' ? 'en' : 'fi';
+  } catch {
+    return 'fi';
+  }
 }
 
 // ── App ───────────────────────────────────────────────────────────────────────
@@ -68,7 +71,11 @@ export default function App() {
   ];
 
   useEffect(() => {
-    localStorage.setItem('entailu-lang', lang);
+    try {
+      localStorage.setItem('entailu-lang', lang);
+    } catch {
+      // storage unavailable (e.g. cookies blocked) — language still works for the session
+    }
     document.title = t.pageTitle;
     document.documentElement.lang = lang;
   }, [lang, t.pageTitle]);

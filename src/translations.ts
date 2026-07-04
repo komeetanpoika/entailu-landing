@@ -180,7 +180,7 @@ export const translations: Record<Lang, Translation> = {
         { title: 'Aukoton kirjanpito', body: 'Jokainen erä elää muuttumattomassa tapahtumakirjanpidossa — vastaanotot, myynnit, poistot, jalostukset. Luvut täsmäävät aina, eikä mitään poisteta hiljaa.' },
         { title: 'Automaattinen FIFO', body: 'Myynnit vähennetään ensin aikaisimmin vanhenevasta erästä. Avatut erät saavat enintään kahden päivän käyttöajan, ja vanheneva kala nousee esiin ennen kuin siitä tulee hävikkiä.' },
         { title: 'Tekoäly lukee lähetteet', body: 'Ota kuva lähetyslistasta. Claude lukee jokaisen rivin ja yhdistää sen tuotteisiisi — sinä vain tarkistat ja vahvistat.' },
-        { title: 'Kassamyynnin tuonti', body: 'Lataa päivän myyntiraportti. Tuotteet täsmäytyvät automaattisesti, eurot pysyvät tarkkoina ja tuplatiedostot jäävät kiinni ennen kahdenkertaista kirjausta.' },
+        { title: 'Kassamyynnin tuonti', body: 'Lataa päivän myyntiraportti. Tuotteet täsmäytyvät automaattisesti, eurot pysyvät tarkkoina ja tuplatiedostot jäävät kiinni ennen kuin ne kirjautuvat kahteen kertaan.' },
         { title: 'Kalakohtainen tilaaminen', body: 'Neljä tilausstrategiaa Leanista Safety+:aan. Jokainen tuote saa omansa myyntinopeuden ja katteen perusteella — tai valitse itse kalakohtaisesti.' },
         { title: 'Analytiikkanäkymä', body: 'Myynti, varaston arvo, hävikki, kate ja läpimyynti tuotteittain — hävikkiriski ja matala saldo näkyvät heti avattaessa.' },
       ],
@@ -193,7 +193,7 @@ export const translations: Record<Lang, Translation> = {
         { name: 'Lean', buffer: 'Ei puskuria', body: 'Tilaa täsmälleen ennustetun menekin verran. Hitaille, matalakatteisille tuotteille, joilla hävikki maksaa enemmän kuin menetetty myynti.' },
         { name: 'Cautious', buffer: '+10 % puskuri', body: 'Kevyt varmuusmarginaali hitaammille tuotteille, jotka silti ansaitsevat paikkansa tiskissä.' },
         { name: 'Balanced', buffer: '+20 % puskuri', body: 'Työjuhta. Riittävästi puskuria kiireisen viikonlopun varalle täyttämättä tiskiä riskillä.' },
-        { name: 'Safety+', buffer: '+3 päivän kate', body: 'Älä menetä myyntiä nopeilla, hyväkatteisilla suosikeillasi. Lisäpäiviä sinne, missä hyllypuute sattuu eniten.' },
+        { name: 'Safety+', buffer: '+3 päivän riitto', body: 'Älä menetä myyntiä nopeilla, hyväkatteisilla suosikeillasi. Lisäpäiviä sinne, missä hyllypuute sattuu eniten.' },
       ],
     },
     workflow: {
