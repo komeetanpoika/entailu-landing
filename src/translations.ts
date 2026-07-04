@@ -156,7 +156,7 @@ export const translations: Record<Lang, Translation> = {
     hero: {
       kicker: 'Kalatiskin varastonhallinta',
       headline: { pre: 'Kalan', em: 'tarkkuudella.', post: '' },
-      sub: 'Entailu seuraa kalavarastoa painon tarkkuudella muuttumattomalla tapahtumakirjanpidolla, hoitaa FIFO-kierron automaattisesti ja kertoo, mitä kutakin kalaa kannattaa tilata — täydellä omavalvontajäljellä, joka ikinen päivä.',
+      sub: 'Entailu seuraa kalavarastoa gramman tarkkuudella muuttumattomalla tapahtumakirjanpidolla, hoitaa FIFO-kierron automaattisesti ja kertoo, mitä kutakin kalaa kannattaa tilata — kattavalla omavalvontakirjanpidolla, joka ikinen päivä.',
       ctaPrimary: 'Varaa esittely',
       ctaSecondary: 'Katso ominaisuudet →',
     },
@@ -173,7 +173,7 @@ export const translations: Record<Lang, Translation> = {
       { label: 'Vähemmän manuaalista kirjaamista', note: 'verrattuna taulukkolaskentaan' },
     ],
     features: {
-      kicker: 'Ominaisuudet',
+      kicker: 'Mitä Entailu tekee',
       heading: ['Kalatiskille tehty,', 'ei yleisvarastoksi.'],
       intro: 'Jokainen ominaisuus on suunniteltu kalatiskin todelliseen arkeen — helposti pilaantuvat tuotteet, painoperusteinen myynti, päivittäinen omavalvonta ja tekoälyavusteinen vastaanotto.',
       cards: [
@@ -203,7 +203,7 @@ export const translations: Record<Lang, Translation> = {
         { title: 'Vastaanota', body: 'Ota kuva lähetteestä. Tekoäly lukee rivit ja täsmäyttää ne tuotteisiisi.' },
         { title: 'Avaa', body: 'Merkitse erä avatuksi. Viimeinen käyttöpäivä rajautuu automaattisesti kahteen päivään.' },
         { title: 'Myy', body: 'Kirjaa käsin tai tuo kassatiedosto. FIFO toteutuu ilman että sitä ajattelet.' },
-        { title: 'Kirjaa', body: 'Aamu- ja iltakirjaukset — vanhenemispäätökset, toimitukset, myynti, hävikki. Aikaleimattu ja kuitattu.' },
+        { title: 'Kirjaa', body: 'Aamu- ja iltakirjaukset — vanhenemispäätökset, toimitukset, myynti, hävikki. Aikaleimattuina ja kuitattuina.' },
       ],
     },
     compliance: {
@@ -212,11 +212,11 @@ export const translations: Record<Lang, Translation> = {
       paragraph: 'Aamu- ja iltakirjaukset tuottavat aikaleimatun, kuitatun omavalvontamerkinnän jokaisesta myyntipäivästä — ja jokaisella tuotteella on tieteellinen nimensä, kuten EU:n merkintäsäännöt edellyttävät. Ei paperia. Ei aukkoja. Valmiina tarkastukseen milloin tahansa.',
       items: [
         'Aamu- ja iltakirjaukset',
-        'Vanhenevien erien päätösjälki',
+        'Vanhenevien erien päätösloki',
         'FIFO-varastonkierto',
         'Muuttumaton tapahtumakirjanpito',
         'Poistojen dokumentointi',
-        'Toimitusten todennus',
+        'Toimitusten vahvistus',
         'Tieteelliset nimet tuotteilla',
         'Automaattinen vanhentumispoisto',
       ],
