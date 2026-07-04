@@ -29,7 +29,7 @@ Make the landing page bilingual: Finnish as the default language, English as the
   - contact: kicker, heading, paragraph, four bullet points, form field labels + placeholders, submit/sending button labels, success panel (title + body), error message
   - footer rights text; document `<title>` per language
 - `export const translations: Record<Lang, Translation>` — TypeScript enforces key parity between FI and EN; a missing translation is a compile error.
-- English copy moves verbatim from `App.tsx`. Finnish copy is drafted new, in native-quality business Finnish; hero headline is an idiomatic equivalent (working draft: "Joka gramma tiedossa."), not a literal translation.
+- English copy moves verbatim from `App.tsx`. Finnish copy is drafted new, in native-quality business Finnish; hero headline is an idiomatic equivalent, not a literal translation. **Decided (user):** the Finnish hero headline is **"Kalan tarkkuudella."** Because the FI and EN headlines break across different numbers of lines, the headline is stored as `{pre, em, post}` segments (each possibly empty; `em` renders italic) rather than three fixed lines — EN: `{pre: 'Every gram,', em: 'accounted', post: 'for.'}`, FI: `{pre: 'Kalan', em: 'tarkkuudella.', post: ''}`.
 
 ### `src/App.tsx` (modified)
 
