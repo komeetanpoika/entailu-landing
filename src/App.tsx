@@ -79,11 +79,46 @@ const COMPLIANCE = [
   'Automatic expiry sweep',
 ];
 
+const WEB3FORMS_ACCESS_KEY = '17ae9229-1b47-4ace-b060-852f261496a6';
+
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const s1 = useCounter(12400);
   const s2 = useCounter(847);
   const s3 = useCounter(98);
+  const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  async function handleDemoSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    if (data.get('botcheck')) return; // honeypot
+    const payload = {
+      access_key: WEB3FORMS_ACCESS_KEY,
+      subject: 'Entailu demo request',
+      from_name: 'entailu.fi landing page',
+      name: data.get('name'),
+      email: data.get('email'),
+      company: data.get('company'),
+    };
+    setFormStatus('sending');
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setFormStatus('sent');
+        form.reset();
+      } else {
+        setFormStatus('error');
+      }
+    } catch {
+      setFormStatus('error');
+    }
+  }
 
   return (
     <div className="min-h-screen bg-cream font-body text-ink overflow-x-hidden">
@@ -339,34 +374,48 @@ export default function App() {
             </div>
           </div>
 
-          <form
-            className="flex flex-col gap-6"
-            onSubmit={e => { e.preventDefault(); alert("Kiitos! We'll be in touch shortly."); }}
-          >
-            {[
-              { label: 'Name',    type: 'text',  placeholder: 'Your name',      required: true  },
-              { label: 'Email',   type: 'email', placeholder: 'you@company.com', required: true  },
-              { label: 'Company', type: 'text',  placeholder: 'Optional',        required: false },
-            ].map(f => (
-              <div key={f.label}>
-                <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-ink/35 mb-2.5">
-                  {f.label}
-                </label>
-                <input
-                  type={f.type}
-                  placeholder={f.placeholder}
-                  required={f.required}
-                  className="w-full border border-ink/15 bg-transparent px-4 py-3.5 font-mono text-sm placeholder-ink/20 focus:outline-none focus:border-forest transition-colors"
-                />
-              </div>
-            ))}
-            <button
-              type="submit"
-              className="font-mono text-[10px] uppercase tracking-[0.2em] bg-ink text-cream px-8 py-4 hover:bg-forest transition-colors mt-2"
-            >
-              Book a demo →
-            </button>
-          </form>
+          {formStatus === 'sent' ? (
+            <div className="border border-forest/30 bg-forest/[0.04] px-8 py-12 text-center">
+              <p className="font-display text-3xl font-light text-forest mb-4">Kiitos!</p>
+              <p className="text-ink/50 leading-relaxed">
+                Your demo request is on its way. We'll be in touch shortly.
+              </p>
+            </div>
+          ) : (
+            <form className="flex flex-col gap-6" onSubmit={handleDemoSubmit}>
+              <input type="checkbox" name="botcheck" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+              {[
+                { label: 'Name',    name: 'name',    type: 'text',  placeholder: 'Your name',       required: true  },
+                { label: 'Email',   name: 'email',   type: 'email', placeholder: 'you@company.com', required: true  },
+                { label: 'Company', name: 'company', type: 'text',  placeholder: 'Optional',        required: false },
+              ].map(f => (
+                <div key={f.label}>
+                  <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-ink/35 mb-2.5">
+                    {f.label}
+                  </label>
+                  <input
+                    type={f.type}
+                    name={f.name}
+                    placeholder={f.placeholder}
+                    required={f.required}
+                    className="w-full border border-ink/15 bg-transparent px-4 py-3.5 font-mono text-sm placeholder-ink/20 focus:outline-none focus:border-forest transition-colors"
+                  />
+                </div>
+              ))}
+              <button
+                type="submit"
+                disabled={formStatus === 'sending'}
+                className="font-mono text-[10px] uppercase tracking-[0.2em] bg-ink text-cream px-8 py-4 hover:bg-forest transition-colors mt-2 disabled:opacity-50 disabled:cursor-wait"
+              >
+                {formStatus === 'sending' ? 'Sending…' : 'Book a demo →'}
+              </button>
+              {formStatus === 'error' && (
+                <p className="font-mono text-xs text-ochre-400">
+                  Something went wrong — please try again, or email us directly.
+                </p>
+              )}
+            </form>
+          )}
         </div>
       </section>
 
