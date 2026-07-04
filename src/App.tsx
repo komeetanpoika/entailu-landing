@@ -46,30 +46,37 @@ const TICKER = [
 ];
 
 const FEATURES = [
-  { n: '01', title: 'Weight-precise tracking',  body: 'Every piece logged from delivery through sale or discard — weight, expiry, and status always current.' },
-  { n: '02', title: 'Automatic FIFO',           body: 'Sales deduct from the oldest opened stock first. Near-expiry pieces surface for action before they become waste.' },
-  { n: '03', title: 'AI delivery parsing',      body: 'Photograph a delivery note. Claude Vision reads every line item and matches it to your product catalogue instantly.' },
-  { n: '04', title: 'POS import',               body: 'Upload your daily sales export. Products match automatically — one step instead of hours of reconciliation.' },
-  { n: '05', title: 'Morning checklist',        body: '8-item guided workflow: expired stock, near-expiry decisions, deliveries, sanitation, temperatures, equipment.' },
-  { n: '06', title: 'Order planning',           body: 'Stock coverage calendar from 30-day sales velocity. See run-out dates before they become stockouts.' },
+  { n: '01', title: 'Ledger-true stock',        body: 'Every lot lives in an append-only movement ledger — received, sold, discarded, processed. The numbers always reconcile, and nothing is ever silently deleted.' },
+  { n: '02', title: 'Automatic FIFO',           body: 'Sales deduct from the earliest-expiring stock first. Opened lots cap at the 2-day shelf life, and near-expiry pieces surface for a decision before they become waste.' },
+  { n: '03', title: 'AI delivery parsing',      body: 'Photograph a delivery note. Claude vision reads every line item and matches it to your product catalogue — you just review and confirm.' },
+  { n: '04', title: 'POS import',               body: 'Upload the daily sales export. Products match automatically, euros stay exact, and duplicate files are caught before they double-count.' },
+  { n: '05', title: 'Per-fish ordering',        body: 'Four ordering strategies, from Lean to Safety+. Each product is auto-assigned one from its sales velocity and margin — or pin your own choice per fish.' },
+  { n: '06', title: 'Analytics dashboard',      body: 'Sales, stock value, waste, margin and sell-through, charted per product — with waste risk and low stock flagged the moment you open it.' },
+];
+
+const ALGOS = [
+  { name: 'Lean',     buffer: 'No buffer',   body: 'Cover forecast demand exactly. For slow, low-margin products where waste costs more than a missed sale.' },
+  { name: 'Cautious', buffer: '+10% buffer', body: 'A light safety margin for slower products that still earn their place in the counter.' },
+  { name: 'Balanced', buffer: '+20% buffer', body: 'The workhorse. Enough buffer to absorb a busy weekend without filling the case with risk.' },
+  { name: 'Safety+',  buffer: '+3 days cover', body: 'Never miss a sale on your fast, high-margin heroes. Extra days of cover where stockouts hurt most.' },
 ];
 
 const STEPS = [
   { n: '1', title: 'Receive',  body: 'Photograph the delivery note. AI reads every item and fuzzy-matches to your catalogue.' },
   { n: '2', title: 'Open',     body: 'Mark pieces opened. Expiry caps automatically at the 2-day fish shelf life.' },
   { n: '3', title: 'Sell',     body: 'Record manually or import the POS file. FIFO enforced without you thinking about it.' },
-  { n: '4', title: 'Comply',   body: 'Run the morning checklist. 8 items. Timestamped. Stored. Ready for any inspection.' },
+  { n: '4', title: 'Comply',   body: 'Morning and evening records — near-expiry decisions, deliveries, sales, waste. Timestamped and attested.' },
 ];
 
 const COMPLIANCE = [
-  'Daily temperature logs',
-  'Cleaning & sanitation records',
+  'Morning & end-of-day records',
   'Near-expiry action audit trail',
   'FIFO stock rotation',
+  'Append-only movement ledger',
   'Discard documentation',
   'Delivery verification',
-  'Equipment alarm checks',
-  'Daily note archive',
+  'Scientific names per product',
+  'Automatic expiry sweep',
 ];
 
 // ── App ───────────────────────────────────────────────────────────────────────
@@ -87,6 +94,7 @@ export default function App() {
           <span className="font-display text-xl tracking-[0.15em] font-medium select-none">ENTAILU</span>
           <div className="flex items-center gap-8">
             <a href="#features"    className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink transition-colors hidden sm:block">Features</a>
+            <a href="#ordering"    className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink transition-colors hidden sm:block">Ordering</a>
             <a href="#compliance"  className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink/40 hover:text-ink transition-colors hidden sm:block">Compliance</a>
             <a href="#contact"     className="font-mono text-[10px] uppercase tracking-[0.2em] bg-ink text-cream px-5 py-2.5 hover:bg-forest transition-colors">
               Get a demo
@@ -110,7 +118,7 @@ export default function App() {
               for.
             </h1>
             <p className="font-body text-cream/50 text-lg leading-relaxed max-w-md mb-12">
-              Entailu tracks fish stock by weight from delivery through sale, enforces FIFO automatically, and generates a full compliance record — every single day.
+              Entailu tracks fish stock by weight through an append-only ledger, enforces FIFO automatically, and knows what each fish needs ordered — with a full compliance record, every single day.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a href="#contact"  className="font-mono text-[10px] uppercase tracking-[0.2em] bg-ochre text-ink px-8 py-4 hover:bg-ochre-400 transition-colors text-center">
@@ -256,6 +264,37 @@ export default function App() {
         </div>
       </section>
 
+      {/* ── ORDERING ── */}
+      <section id="ordering" className="py-32 px-6 sm:px-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-16 mb-20 items-end">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/30 mb-5">Ordering intelligence</p>
+              <h2 className="font-display text-[clamp(2.5rem,5vw,4rem)] font-light leading-tight">
+                One strategy<br />per fish.
+              </h2>
+            </div>
+            <div className="lg:pb-2">
+              <p className="text-ink/45 leading-relaxed max-w-lg text-lg">
+                Entailu measures 28-day sales velocity and margin for every product and places it on the service-versus-waste curve. Each fish is assigned the ordering strategy that fits it — automatically, or pinned by you.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-ink/10">
+            {ALGOS.map((a) => (
+              <div key={a.name} className="border-b border-r border-ink/10 p-9 group hover:bg-forest/[0.03] transition-colors cursor-default">
+                <div className="font-mono text-[10px] uppercase tracking-widest text-ochre mb-7">{a.buffer}</div>
+                <h3 className="font-display text-2xl font-light mb-4 group-hover:text-forest transition-colors duration-300">
+                  {a.name}
+                </h3>
+                <p className="text-ink/45 text-sm leading-relaxed">{a.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── COMPLIANCE ── */}
       <section id="compliance" className="py-32 px-6 sm:px-10 bg-forest text-cream">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
@@ -265,7 +304,7 @@ export default function App() {
               Built for 852/2004,<br />853/2004<br />and HACCP.
             </h2>
             <p className="text-cream/50 leading-relaxed max-w-md text-lg">
-              The morning checklist generates a timestamped compliance record for every legally required daily check. No paper. No gaps. Ready for inspection at any time.
+              Morning and end-of-day checklists generate a timestamped, attested compliance record for every day of trading — and every product carries its scientific name, as EU labelling rules require. No paper. No gaps. Ready for inspection at any time.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -291,7 +330,7 @@ export default function App() {
               We'll walk you through Entailu using your product catalogue and delivery notes. No slides — just the actual system.
             </p>
             <div className="space-y-3">
-              {['Setup in under one day', 'Training included', 'Finnish support'].map(b => (
+              {['Setup in under one day', 'Training included', 'Multi-shop support', 'Finnish support'].map(b => (
                 <div key={b} className="flex items-center gap-3">
                   <span className="text-forest font-mono text-sm">—</span>
                   <span className="font-mono text-xs text-ink/50 uppercase tracking-wider">{b}</span>
